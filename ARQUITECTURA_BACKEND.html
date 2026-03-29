@@ -1,0 +1,978 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Arquitectura TallerPro — Guía Completa</title>
+<style>
+  :root {
+    --bg: #0f1117;
+    --card: #1a1d2e;
+    --card2: #22263a;
+    --border: #2e3250;
+    --text: #e2e8f0;
+    --muted: #8892a4;
+    --blue: #4f8ef7;
+    --green: #22c55e;
+    --orange: #f97316;
+    --purple: #a855f7;
+    --red: #ef4444;
+    --yellow: #eab308;
+    --cyan: #06b6d4;
+    --pink: #ec4899;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; line-height: 1.7; }
+
+  nav { position: sticky; top: 0; z-index: 100; background: #0d0f1a; border-bottom: 1px solid var(--border); padding: 0 2rem; overflow-x: auto; white-space: nowrap; }
+  nav ul { display: inline-flex; gap: 0; list-style: none; }
+  nav a { display: block; padding: .6rem 1rem; color: var(--muted); text-decoration: none; font-size: .8rem; font-weight: 500; border-bottom: 2px solid transparent; transition: all .2s; }
+  nav a:hover { color: var(--blue); border-bottom-color: var(--blue); }
+
+  .container { max-width: 1100px; margin: 0 auto; padding: 2rem; }
+
+  .hero { background: linear-gradient(135deg, #0f1117 0%, #1a1d2e 50%, #0f1117 100%); border-bottom: 1px solid var(--border); padding: 4rem 2rem; text-align: center; }
+  .hero h1 { font-size: 2.8rem; font-weight: 800; background: linear-gradient(90deg, var(--blue), var(--purple)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: .5rem; }
+  .hero p { color: var(--muted); font-size: 1.15rem; max-width: 600px; margin: 0 auto; }
+  .hero .badges { display: flex; gap: .5rem; justify-content: center; flex-wrap: wrap; margin-top: 1.5rem; }
+  .badge { background: var(--card2); border: 1px solid var(--border); border-radius: 20px; padding: .25rem .8rem; font-size: .78rem; color: var(--muted); }
+
+  section { margin-bottom: 4rem; }
+  .section-title { display: flex; align-items: center; gap: .75rem; font-size: 1.6rem; font-weight: 700; margin-bottom: 1.5rem; padding-bottom: .75rem; border-bottom: 1px solid var(--border); }
+  .section-title .icon { font-size: 1.8rem; }
+  h3 { font-size: 1.15rem; font-weight: 600; color: var(--blue); margin: 1.5rem 0 .75rem; }
+  h4 { font-size: 1rem; font-weight: 600; color: var(--orange); margin: 1.2rem 0 .5rem; }
+  p { margin-bottom: .9rem; color: var(--text); }
+
+  .card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem; margin-bottom: 1rem; }
+  .card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1rem; margin: 1rem 0; }
+  .card.accent-blue { border-left: 3px solid var(--blue); }
+  .card.accent-green { border-left: 3px solid var(--green); }
+  .card.accent-orange { border-left: 3px solid var(--orange); }
+  .card.accent-purple { border-left: 3px solid var(--purple); }
+  .card.accent-red { border-left: 3px solid var(--red); }
+  .card.accent-cyan { border-left: 3px solid var(--cyan); }
+  .card.accent-yellow { border-left: 3px solid var(--yellow); }
+  .card h4 { margin-top: 0; }
+
+  .callout { border-radius: 10px; padding: 1rem 1.25rem; margin: 1rem 0; display: flex; gap: .75rem; align-items: flex-start; }
+  .callout.info { background: rgba(79,142,247,.1); border: 1px solid rgba(79,142,247,.3); }
+  .callout.warn { background: rgba(234,179,8,.1); border: 1px solid rgba(234,179,8,.3); }
+  .callout.success { background: rgba(34,197,94,.1); border: 1px solid rgba(34,197,94,.3); }
+  .callout.danger { background: rgba(239,68,68,.1); border: 1px solid rgba(239,68,68,.3); }
+  .callout-icon { font-size: 1.2rem; flex-shrink: 0; margin-top: .1rem; }
+  .callout p { margin: 0; font-size: .92rem; }
+
+  pre, code { font-family: 'SF Mono', 'Fira Code', Consolas, monospace; }
+  code { background: rgba(255,255,255,.08); padding: .15em .4em; border-radius: 4px; font-size: .88em; color: var(--cyan); }
+  pre { background: #080a14; border: 1px solid var(--border); border-radius: 10px; padding: 1.25rem; overflow-x: auto; font-size: .85rem; line-height: 1.6; margin: 1rem 0; }
+  pre .c { color: #5a6a8a; }
+  pre .k { color: var(--purple); }
+  pre .s { color: var(--green); }
+  pre .p { color: var(--orange); }
+  pre .n { color: var(--blue); }
+  pre .v { color: var(--cyan); }
+
+  table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: .9rem; }
+  th { background: var(--card2); color: var(--muted); font-weight: 600; text-align: left; padding: .75rem 1rem; border-bottom: 1px solid var(--border); font-size: .8rem; text-transform: uppercase; letter-spacing: .05em; }
+  td { padding: .7rem 1rem; border-bottom: 1px solid var(--border); vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: rgba(255,255,255,.02); }
+
+  .arch-diagram { background: #080a14; border: 1px solid var(--border); border-radius: 14px; padding: 2rem; margin: 1.5rem 0; overflow-x: auto; }
+  .arch-row { display: flex; align-items: center; justify-content: center; gap: 1rem; flex-wrap: wrap; margin: .5rem 0; }
+  .arch-box { background: var(--card); border: 2px solid var(--border); border-radius: 10px; padding: .6rem 1rem; text-align: center; min-width: 120px; font-size: .82rem; font-weight: 600; }
+  .arch-box .port { font-size: .7rem; color: var(--muted); font-weight: 400; display: block; margin-top: .2rem; }
+  .arch-box.blue { border-color: var(--blue); color: var(--blue); }
+  .arch-box.green { border-color: var(--green); color: var(--green); }
+  .arch-box.orange { border-color: var(--orange); color: var(--orange); }
+  .arch-box.purple { border-color: var(--purple); color: var(--purple); }
+  .arch-box.red { border-color: var(--red); color: var(--red); }
+  .arch-box.cyan { border-color: var(--cyan); color: var(--cyan); }
+  .arch-box.yellow { border-color: var(--yellow); color: var(--yellow); }
+  .arch-box.pink { border-color: var(--pink); color: var(--pink); }
+  .arch-arrow { color: var(--muted); font-size: 1.3rem; font-weight: 700; }
+  .arch-label { font-size: .72rem; color: var(--muted); text-align: center; display: block; margin-top: .25rem; }
+  .arch-section-label { font-size: .75rem; color: var(--muted); text-align: center; margin: 1rem 0 .25rem; text-transform: uppercase; letter-spacing: .1em; }
+  .arch-divider { border: none; border-top: 1px dashed var(--border); margin: 1rem 2rem; }
+
+  .flow { display: flex; flex-direction: column; gap: 0; margin: 1rem 0; }
+  .flow-step { display: flex; gap: 1rem; align-items: flex-start; }
+  .flow-step-left { display: flex; flex-direction: column; align-items: center; flex-shrink: 0; }
+  .step-num { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: .85rem; flex-shrink: 0; }
+  .step-line { width: 2px; background: var(--border); flex: 1; min-height: 20px; }
+  .flow-step:last-child .step-line { display: none; }
+  .flow-content { padding-bottom: 1.25rem; flex: 1; }
+  .flow-content p { margin: .25rem 0 0; font-size: .9rem; }
+  .flow-content strong { font-size: .95rem; }
+
+  .route-row { display: flex; align-items: center; gap: .75rem; padding: .6rem; border-radius: 8px; margin: .3rem 0; background: var(--card2); font-size: .88rem; }
+  .route-path { color: var(--cyan); font-family: monospace; font-weight: 600; min-width: 200px; }
+  .route-arrow { color: var(--muted); }
+  .route-dest { color: var(--green); font-family: monospace; }
+
+  .chip { display: inline-block; padding: .15rem .6rem; border-radius: 20px; font-size: .75rem; font-weight: 600; margin: .15rem; }
+  .chip.blue { background: rgba(79,142,247,.15); color: var(--blue); border: 1px solid rgba(79,142,247,.3); }
+  .chip.green { background: rgba(34,197,94,.15); color: var(--green); border: 1px solid rgba(34,197,94,.3); }
+  .chip.orange { background: rgba(249,115,22,.15); color: var(--orange); border: 1px solid rgba(249,115,22,.3); }
+  .chip.purple { background: rgba(168,85,247,.15); color: var(--purple); border: 1px solid rgba(168,85,247,.3); }
+  .chip.red { background: rgba(239,68,68,.15); color: var(--red); border: 1px solid rgba(239,68,68,.3); }
+  .chip.cyan { background: rgba(6,182,212,.15); color: var(--cyan); border: 1px solid rgba(6,182,212,.3); }
+  .chip.muted { background: rgba(136,146,164,.1); color: var(--muted); border: 1px solid rgba(136,146,164,.2); }
+
+  .file-tree { background: #080a14; border: 1px solid var(--border); border-radius: 10px; padding: 1.25rem 1.5rem; font-family: monospace; font-size: .85rem; line-height: 2; }
+  .ft-dir { color: var(--blue); }
+  .ft-file { color: var(--text); }
+  .ft-comment { color: #5a6a8a; }
+  .ft-indent { display: inline-block; width: 1.5rem; }
+
+  ul.list { padding-left: 1.5rem; margin: .5rem 0 1rem; }
+  ul.list li { margin-bottom: .4rem; font-size: .93rem; }
+
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  @media (max-width: 700px) { .two-col { grid-template-columns: 1fr; } .arch-row { flex-direction: column; } }
+
+  hr.section-hr { border: none; border-top: 1px solid var(--border); margin: 2.5rem 0; }
+
+  .cmd { background: #080a14; border: 1px solid var(--border); border-radius: 8px; padding: .5rem 1rem; font-family: monospace; font-size: .85rem; color: var(--green); margin: .4rem 0; display: flex; gap: .75rem; align-items: flex-start; }
+  .cmd::before { content: '$'; color: var(--muted); flex-shrink: 0; }
+</style>
+</head>
+<body>
+
+<nav>
+  <ul>
+    <li><a href="#intro">Intro</a></li>
+    <li><a href="#analogia">Analogía</a></li>
+    <li><a href="#docker">Docker</a></li>
+    <li><a href="#nginx">Nginx</a></li>
+    <li><a href="#servidores">Gunicorn vs Daphne</a></li>
+    <li><a href="#estructura">Estructura Django</a></li>
+    <li><a href="#apps">Apps</a></li>
+    <li><a href="#settings">Settings</a></li>
+    <li><a href="#middleware">Middleware</a></li>
+    <li><a href="#websockets">WebSockets</a></li>
+    <li><a href="#redis">Redis</a></li>
+    <li><a href="#multitenant">Multi-Tenant</a></li>
+    <li><a href="#flujo-http">Flujo HTTP</a></li>
+    <li><a href="#flujo-ws">Flujo WS</a></li>
+    <li><a href="#envvars">Variables .env</a></li>
+    <li><a href="#comandos">Comandos</a></li>
+  </ul>
+</nav>
+
+<div class="hero">
+  <h1>🏗️ Arquitectura TallerPro</h1>
+  <p>Guía completa y visual del backend — desde el VPS hasta el navegador</p>
+  <div class="badges">
+    <span class="badge">🐍 Django</span>
+    <span class="badge">🐳 Docker</span>
+    <span class="badge">⚡ WebSockets</span>
+    <span class="badge">🔴 Redis</span>
+    <span class="badge">🐘 PostgreSQL</span>
+    <span class="badge">🌐 Nginx</span>
+    <span class="badge">🔔 Notificaciones RT</span>
+  </div>
+</div>
+
+<div class="container">
+
+<!-- INTRO -->
+<section id="intro">
+  <div class="section-title"><span class="icon">📖</span> Introducción — Por qué importa entender esto</div>
+  <p>Este documento te explica <strong>cómo está construido el backend de TallerPro</strong> desde cero. No asume que ya sabes de infraestructura — va a explicar cada pieza como si fuera la primera vez que la ves.</p>
+  <div class="callout info">
+    <span class="callout-icon">💡</span>
+    <p><strong>La idea clave:</strong> El backend no es un solo programa. Es un conjunto de <em>servicios especializados</em> que trabajan juntos. Nginx maneja el tráfico, Gunicorn sirve la API, Daphne sirve los WebSockets, Redis manda mensajes internos, PostgreSQL guarda los datos. Docker los mantiene a todos corriendo sin que se pisen entre sí.</p>
+  </div>
+  <p>Cuando entiendes esto, dejas de ver el backend como una caja negra y puedes:</p>
+  <ul class="list">
+    <li>Saber exactamente a dónde ir cuando algo falla</li>
+    <li>Leer los logs del contenedor correcto</li>
+    <li>Entender por qué un cambio en <code>settings/production.py</code> afecta todo</li>
+    <li>Configurar nuevas features sin romper lo que ya funciona</li>
+    <li>Hablar con cualquier dev de backend y entender qué te están diciendo</li>
+  </ul>
+</section>
+
+<!-- ANALOGIA -->
+<section id="analogia">
+  <div class="section-title"><span class="icon">🏢</span> La Analogía del Edificio</div>
+  <p>Imagina que el backend es un <strong>edificio de oficinas moderno</strong>. Así funciona cada pieza:</p>
+  <div class="card-grid">
+    <div class="card accent-blue">
+      <h4>🚪 Nginx = La Recepción</h4>
+      <p>Es lo primero que ves al llegar. Recibe a todos, lee a dónde quieren ir (<code>/api/</code>, <code>/ws/</code>, <code>/static/</code>) y los manda al piso correcto. No hace el trabajo él solo — solo dirige el tráfico.</p>
+    </div>
+    <div class="card accent-orange">
+      <h4>🏭 Gunicorn = Fábrica de Respuestas HTTP</h4>
+      <p>Es el departamento principal. Cuando alguien pide datos de clientes, citas o inventario, aquí Django procesa la petición y regresa el JSON. Llega petición → procesa → responde → cierra conexión.</p>
+    </div>
+    <div class="card accent-purple">
+      <h4>📞 Daphne = Centralita Telefónica</h4>
+      <p>Mantiene <em>líneas abiertas</em> con cada usuario conectado. Cuando pasa algo importante (nueva cita, orden lista), la centralita les avisa inmediatamente sin que ellos tengan que preguntar.</p>
+    </div>
+    <div class="card accent-red">
+      <h4>🗂️ PostgreSQL = El Archivo Central</h4>
+      <p>Sótano del edificio. Aquí vive toda la información: clientes, vehículos, citas, órdenes de trabajo. Nadie accede al archivo directamente — siempre hay un empleado (Django) que va a buscarlo.</p>
+    </div>
+    <div class="card accent-green">
+      <h4>📣 Redis = El Intercomunicador</h4>
+      <p>Los altavoces internos del edificio. Cuando Gunicorn quiere avisarle algo a Daphne — "llegó una nueva cita, avísale al usuario" — le manda un mensaje por los altavoces. Redis entrega el mensaje al instante.</p>
+    </div>
+    <div class="card accent-cyan">
+      <h4>🐳 Docker = Las Paredes</h4>
+      <p>Cada departamento está en su propio cuarto sellado (contenedor). Si uno se rompe, los demás siguen funcionando. Docker asegura que cada cuarto tenga exactamente lo que necesita para operar.</p>
+    </div>
+  </div>
+</section>
+
+<!-- DOCKER -->
+<section id="docker">
+  <div class="section-title"><span class="icon">🐳</span> Docker — Los Contenedores y Cómo Se Hablan</div>
+  <p>Docker permite correr programas en <strong>contenedores aislados</strong>. Piénsalo como una computadora virtual muy ligera — tiene su propio sistema de archivos, sus propias variables de entorno, su propio proceso, pero comparte el kernel del sistema operativo del VPS.</p>
+
+  <h3>¿Por qué usamos Docker en TallerPro?</h3>
+  <ul class="list">
+    <li><strong>Reproducibilidad:</strong> El entorno local es idéntico al del VPS. "En mi máquina funciona" deja de ser un problema.</li>
+    <li><strong>Aislamiento:</strong> Si Postgres falla, Django sigue corriendo. Si WAHA se cuelga, la API no se cae.</li>
+    <li><strong>Facilidad de deploy:</strong> Un solo comando <code>docker compose up --build -d</code> levanta todo.</li>
+  </ul>
+
+  <h3>La arquitectura REAL en producción</h3>
+  <div class="callout warn">
+    <span class="callout-icon">⚠️</span>
+    <p><strong>Importante:</strong> En tu VPS, Nginx está instalado <em>directamente en el sistema</em>, no en Docker. Por eso no aparece como contenedor en <code>docker ps</code>. Los contenedores exponen sus puertos al host y Nginx (del sistema) los usa.</p>
+  </div>
+
+  <div class="arch-diagram">
+    <div class="arch-section-label">INTERNET / NAVEGADOR</div>
+    <div class="arch-row">
+      <div class="arch-box blue">🌐 Navegador<span class="port">app.autotronia.com</span></div>
+    </div>
+    <div class="arch-row"><span class="arch-arrow">↓ HTTPS :443</span></div>
+    <hr class="arch-divider">
+    <div class="arch-section-label">VPS — Sistema operativo (Ubuntu)</div>
+    <div class="arch-row">
+      <div>
+        <div class="arch-box cyan">🌐 Nginx<span class="port">instalado en el sistema<br>/etc/nginx/conf.d/taller-pro.conf</span></div>
+      </div>
+    </div>
+    <div class="arch-row">
+      <span style="color:var(--muted);font-size:.8rem">/api/ → localhost:8001 &nbsp;|&nbsp; /ws/ → localhost:8002 &nbsp;|&nbsp; /static/ → /var/lib/docker/volumes/</span>
+    </div>
+    <hr class="arch-divider">
+    <div class="arch-section-label">Docker containers (red: taller_network)</div>
+    <div class="arch-row" style="margin-top:.75rem">
+      <div>
+        <div class="arch-box orange">⚙️ Gunicorn<br>(Django)<span class="port">host:8001 → container:8000</span></div>
+        <span class="arch-label">taller_backend</span>
+      </div>
+      <span class="arch-arrow">↔ Redis channel layer</span>
+      <div>
+        <div class="arch-box purple">⚡ Daphne<br>(ASGI/WS)<span class="port">host:8002 → container:8001</span></div>
+        <span class="arch-label">taller_daphne</span>
+      </div>
+    </div>
+    <div class="arch-row" style="margin-top:.5rem">
+      <div>
+        <div class="arch-box red">🐘 PostgreSQL<span class="port">solo interno :5432</span></div>
+        <span class="arch-label">taller_db</span>
+      </div>
+      <div>
+        <div class="arch-box green">🔴 Redis<span class="port">solo interno :6379</span></div>
+        <span class="arch-label">taller_redis</span>
+      </div>
+      <div>
+        <div class="arch-box yellow">📱 WAHA<span class="port">host:3000</span></div>
+        <span class="arch-label">taller_waha</span>
+      </div>
+    </div>
+  </div>
+
+  <h3>Tabla de puertos en producción</h3>
+  <table>
+    <thead><tr><th>Contenedor</th><th>Puerto host</th><th>Puerto interno</th><th>¿Accesible desde internet?</th></tr></thead>
+    <tbody>
+      <tr><td><code>taller_backend</code> (Gunicorn)</td><td><strong>8001</strong></td><td>8000</td><td><span class="chip muted">Solo vía Nginx → /api/</span></td></tr>
+      <tr><td><code>taller_daphne</code> (Daphne)</td><td><strong>8002</strong></td><td>8001</td><td><span class="chip muted">Solo vía Nginx → /ws/</span></td></tr>
+      <tr><td><code>taller_db</code> (PostgreSQL)</td><td>—</td><td>5432</td><td><span class="chip red">No expuesto</span></td></tr>
+      <tr><td><code>taller_redis</code></td><td>—</td><td>6379</td><td><span class="chip red">No expuesto</span></td></tr>
+      <tr><td><code>taller_waha</code></td><td><strong>3000</strong></td><td>3000</td><td><span class="chip green">Sí — puerto 3000</span></td></tr>
+      <tr><td><code>taller_pgadmin</code></td><td><strong>5050</strong></td><td>80</td><td><span class="chip orange">Solo admin</span></td></tr>
+    </tbody>
+  </table>
+
+  <h3>Cómo se comunican los contenedores entre sí</h3>
+  <p>Docker crea una red virtual interna llamada <code>taller_network</code>. Dentro de esa red, cada contenedor tiene un hostname que es su nombre de servicio. Entonces:</p>
+  <div class="card accent-blue">
+    <ul class="list" style="margin:0">
+      <li>Django se conecta a Postgres como <code>db:5432</code> (variable <code>DB_HOST=db</code>)</li>
+      <li>Django se conecta a Redis como <code>redis:6379</code> (variable <code>REDIS_HOST=redis</code>)</li>
+      <li>WAHA le manda webhooks a Django como <code>http://web:8000/api/webhooks/whatsapp/</code></li>
+      <li>Nginx del sistema habla con los contenedores via <code>localhost:8001</code> y <code>localhost:8002</code></li>
+    </ul>
+  </div>
+
+  <h3>Los dos docker-compose</h3>
+  <div class="two-col">
+    <div class="card accent-orange">
+      <h4>docker-compose.local.yml — Desarrollo</h4>
+      <p>Para tu computadora. Sin SSL. Incluye Nginx como contenedor. Django usa <code>settings/development.py</code>. El código se monta como volumen — los cambios se reflejan sin rebuild.</p>
+      <div class="cmd">docker compose -f docker-compose.local.yml up --build</div>
+    </div>
+    <div class="card accent-green">
+      <h4>docker-compose.yml — Producción</h4>
+      <p>Para el VPS. Sin Nginx en Docker (está en el sistema). El código está bakeado en la imagen. Debes hacer <code>--build</code> para que los cambios de código surtan efecto.</p>
+      <div class="cmd">docker compose up --build -d</div>
+    </div>
+  </div>
+
+  <div class="callout danger">
+    <span class="callout-icon">🚫</span>
+    <p><strong>Error común:</strong> Hacer <code>docker compose restart</code> después de cambiar código en producción NO funciona. El restart reinicia el contenedor pero con la imagen vieja. Siempre necesitas <code>--build</code> para reconstruir la imagen con el nuevo código.</p>
+  </div>
+</section>
+
+<!-- NGINX -->
+<section id="nginx">
+  <div class="section-title"><span class="icon">🌐</span> Nginx — El Portero Inteligente</div>
+  <p>Nginx es un servidor web y reverse proxy. En TallerPro cumple tres funciones:</p>
+  <ul class="list">
+    <li><strong>Reverse proxy:</strong> recibe peticiones de internet y las reenvía al servicio correcto</li>
+    <li><strong>Servidor de archivos estáticos:</strong> sirve CSS, JS, imágenes directamente desde disco sin pasar por Django</li>
+    <li><strong>Terminador SSL:</strong> desencripta HTTPS y habla con Django por HTTP interno</li>
+  </ul>
+
+  <h3>¿Qué significa "reverse proxy"?</h3>
+  <p>El cliente nunca habla directamente con Django. Habla con Nginx, Nginx le pregunta a Django, y le regresa la respuesta al cliente. Django nunca ve el internet directamente — Nginx lo protege.</p>
+
+  <h3>Cómo Nginx enruta cada petición (tu archivo real del VPS)</h3>
+  <div class="route-row"><span class="route-path">/static/</span><span class="route-arrow">→</span><span class="route-dest">📁 /var/lib/docker/volumes/taller_static/_data/</span><span class="chip muted" style="margin-left:auto">Sin Django</span></div>
+  <div class="route-row"><span class="route-path">/media/</span><span class="route-arrow">→</span><span class="route-dest">📁 /var/lib/docker/volumes/taller_media/_data/</span><span class="chip muted" style="margin-left:auto">Sin Django</span></div>
+  <div class="route-row"><span class="route-path">/ws/</span><span class="route-arrow">→</span><span class="route-dest">⚡ localhost:8002 (Daphne)</span><span class="chip purple" style="margin-left:auto">Con headers Upgrade</span></div>
+  <div class="route-row"><span class="route-path">/</span><span class="route-arrow">→</span><span class="route-dest">⚙️ localhost:8001 (Gunicorn/Django)</span><span class="chip orange" style="margin-left:auto">Todo lo demás</span></div>
+
+  <h3>El truco de los WebSockets en Nginx</h3>
+  <p>HTTP normal es como mandar una carta: envías, recibes respuesta, se acabó. WebSocket es como una llamada telefónica: la conexión queda abierta. Para que Nginx convierta una petición HTTP en WebSocket necesita dos headers especiales:</p>
+  <pre><span class="c"># Sin estos dos headers, los WebSockets NO funcionan</span>
+<span class="n">proxy_set_header</span> <span class="p">Upgrade</span> <span class="v">$http_upgrade</span><span class="p">;</span>   <span class="c"># Le dice: "este es un upgrade de protocolo"</span>
+<span class="n">proxy_set_header</span> <span class="p">Connection</span> <span class="s">"upgrade"</span><span class="p">;</span>    <span class="c"># Confirma el upgrade</span>
+<span class="n">proxy_http_version</span> <span class="v">1.1</span><span class="p">;</span>                  <span class="c"># WebSocket requiere HTTP/1.1</span></pre>
+  <p>Tu archivo <code>/etc/nginx/conf.d/taller-pro.conf</code> ya tiene esto correctamente configurado en el bloque <code>location /ws/</code>.</p>
+
+  <h3>SSL — cómo funciona HTTPS</h3>
+  <div class="two-col">
+    <div class="card accent-orange">
+      <h4>Servidor HTTP (:80)</h4>
+      <p>Solo acepta el challenge de Let's Encrypt (para renovar certificados) y redirige todo a HTTPS con <code>return 301</code>.</p>
+    </div>
+    <div class="card accent-green">
+      <h4>Servidor HTTPS (:443)</h4>
+      <p>Lee el certificado de <code>/etc/letsencrypt/live/api.autotronia.com/</code>, desencripta las peticiones, y las manda a Django por HTTP interno (localhost:8001).</p>
+    </div>
+  </div>
+</section>
+
+<!-- SERVIDORES -->
+<section id="servidores">
+  <div class="section-title"><span class="icon">⚙️</span> Gunicorn vs Daphne — Dos Servidores, Dos Propósitos</div>
+  <div class="two-col">
+    <div class="card accent-orange">
+      <h4>⚙️ Gunicorn — Servidor WSGI</h4>
+      <p><strong>WSGI</strong> = Web Server Gateway Interface. Estándar clásico de Python para web.</p>
+      <p><strong>Cómo funciona:</strong> Llega petición HTTP → Django procesa → regresa respuesta → conexión cerrada. Sincrónico y stateless.</p>
+      <p><strong>Para qué:</strong> Toda la API REST (<code>/api/customers/</code>, <code>/api/workshop/</code>, etc.) y el admin.</p>
+      <p><strong>Archivo de entrada:</strong> <code>config/wsgi.py</code></p>
+      <p><strong>Puerto en host (producción):</strong> <code>8001</code></p>
+    </div>
+    <div class="card accent-purple">
+      <h4>⚡ Daphne — Servidor ASGI</h4>
+      <p><strong>ASGI</strong> = Asynchronous Server Gateway Interface. Estándar moderno que soporta conexiones persistentes.</p>
+      <p><strong>Cómo funciona:</strong> El cliente conecta → la conexión queda ABIERTA → el servidor puede mandar mensajes cuando quiera.</p>
+      <p><strong>Para qué:</strong> Las notificaciones en tiempo real (<code>/ws/notifications/</code>).</p>
+      <p><strong>Archivo de entrada:</strong> <code>config/asgi.py</code></p>
+      <p><strong>Puerto en host (producción):</strong> <code>8002</code></p>
+    </div>
+  </div>
+
+  <div class="arch-diagram">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:2rem">
+      <div>
+        <div class="arch-section-label">HTTP Clásico (Gunicorn)</div>
+        <div class="flow" style="margin-top:.5rem">
+          <div class="flow-step">
+            <div class="flow-step-left"><div class="step-num" style="background:rgba(249,115,22,.2);color:var(--orange)">1</div><div class="step-line"></div></div>
+            <div class="flow-content"><strong>Browser → Servidor:</strong> "Dame los clientes"</div>
+          </div>
+          <div class="flow-step">
+            <div class="flow-step-left"><div class="step-num" style="background:rgba(249,115,22,.2);color:var(--orange)">2</div><div class="step-line"></div></div>
+            <div class="flow-content"><strong>Servidor → Browser:</strong> "Aquí están: [...]"</div>
+          </div>
+          <div class="flow-step">
+            <div class="flow-step-left"><div class="step-num" style="background:rgba(249,115,22,.2);color:var(--orange)">3</div><div class="step-line"></div></div>
+            <div class="flow-content"><strong>Conexión cerrada.</strong> Para más datos hay que hacer otra petición.</div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="arch-section-label">WebSocket (Daphne)</div>
+        <div class="flow" style="margin-top:.5rem">
+          <div class="flow-step">
+            <div class="flow-step-left"><div class="step-num" style="background:rgba(168,85,247,.2);color:var(--purple)">1</div><div class="step-line"></div></div>
+            <div class="flow-content"><strong>Browser → Servidor:</strong> "Conéctame"</div>
+          </div>
+          <div class="flow-step">
+            <div class="flow-step-left"><div class="step-num" style="background:rgba(168,85,247,.2);color:var(--purple)">2</div><div class="step-line"></div></div>
+            <div class="flow-content"><strong>Servidor → Browser:</strong> "Conectado. Te aviso cuando haya algo."</div>
+          </div>
+          <div class="flow-step">
+            <div class="flow-step-left"><div class="step-num" style="background:rgba(168,85,247,.2);color:var(--purple)">3</div><div class="step-line"></div></div>
+            <div class="flow-content"><strong>... minutos después ...</strong> Servidor → Browser: "¡Nueva cita! 🔔"</div>
+          </div>
+          <div class="flow-step">
+            <div class="flow-step-left"><div class="step-num" style="background:rgba(168,85,247,.2);color:var(--purple)">4</div><div class="step-line"></div></div>
+            <div class="flow-content"><strong>Conexión sigue abierta</strong> hasta que el usuario cierra el tab.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ESTRUCTURA -->
+<section id="estructura">
+  <div class="section-title"><span class="icon">📁</span> La Estructura del Proyecto Django</div>
+  <div class="file-tree">
+    <span class="ft-dir">backend-taller-pro/</span><br>
+    <span class="ft-indent"></span><span class="ft-dir">config/</span> <span class="ft-comment">← El cerebro de Django</span><br>
+    <span class="ft-indent"></span><span class="ft-indent"></span><span class="ft-dir">settings/</span><br>
+    <span class="ft-indent"></span><span class="ft-indent"></span><span class="ft-indent"></span><span class="ft-file">base.py</span> <span class="ft-comment">← Config compartida (siempre se carga)</span><br>
+    <span class="ft-indent"></span><span class="ft-indent"></span><span class="ft-indent"></span><span class="ft-file">development.py</span> <span class="ft-comment">← Agrega config de dev encima de base</span><br>
+    <span class="ft-indent"></span><span class="ft-indent"></span><span class="ft-indent"></span><span class="ft-file">production.py</span> <span class="ft-comment">← Agrega config de prod encima de base</span><br>
+    <span class="ft-indent"></span><span class="ft-indent"></span><span class="ft-indent"></span><span class="ft-file">testing.py</span> <span class="ft-comment">← Para pruebas automáticas</span><br>
+    <span class="ft-indent"></span><span class="ft-indent"></span><span class="ft-file">urls.py</span> <span class="ft-comment">← Registro central de todas las rutas /api/</span><br>
+    <span class="ft-indent"></span><span class="ft-indent"></span><span class="ft-file">asgi.py</span> <span class="ft-comment">← Punto de entrada para Daphne (WebSockets)</span><br>
+    <span class="ft-indent"></span><span class="ft-indent"></span><span class="ft-file">wsgi.py</span> <span class="ft-comment">← Punto de entrada para Gunicorn (HTTP)</span><br>
+    <span class="ft-indent"></span><span class="ft-dir">apps/</span> <span class="ft-comment">← Toda la lógica de negocio</span><br>
+    <span class="ft-indent"></span><span class="ft-indent"></span><span class="ft-dir">core/</span> <span class="ft-comment">← Base: auth, middleware, routing WS</span><br>
+    <span class="ft-indent"></span><span class="ft-indent"></span><span class="ft-dir">customers/</span> <span class="ft-comment">← Clientes y vehículos</span><br>
+    <span class="ft-indent"></span><span class="ft-indent"></span><span class="ft-dir">services/</span> <span class="ft-comment">← Catálogo de servicios del taller</span><br>
+    <span class="ft-indent"></span><span class="ft-indent"></span><span class="ft-dir">appointments/</span> <span class="ft-comment">← Citas</span><br>
+    <span class="ft-indent"></span><span class="ft-indent"></span><span class="ft-dir">workshop/</span> <span class="ft-comment">← Órdenes de trabajo, tareas</span><br>
+    <span class="ft-indent"></span><span class="ft-indent"></span><span class="ft-dir">mechanics/</span> <span class="ft-comment">← Mecánicos y horarios</span><br>
+    <span class="ft-indent"></span><span class="ft-indent"></span><span class="ft-dir">inventory/</span> <span class="ft-comment">← Productos y stock</span><br>
+    <span class="ft-indent"></span><span class="ft-indent"></span><span class="ft-dir">tenants/</span> <span class="ft-comment">← Multi-tenant (cada taller es un tenant)</span><br>
+    <span class="ft-indent"></span><span class="ft-indent"></span><span class="ft-dir">notifications/</span> <span class="ft-comment">← Notificaciones tiempo real + WhatsApp</span><br>
+    <span class="ft-indent"></span><span class="ft-indent"></span><span class="ft-dir">password_reset/</span> <span class="ft-comment">← Reset de contraseña</span><br>
+    <span class="ft-indent"></span><span class="ft-dir">docker/nginx/</span> <span class="ft-comment">← Configs de Nginx para dev (en prod se usa /etc/nginx del sistema)</span><br>
+    <span class="ft-indent"></span><span class="ft-file">docker-compose.yml</span> <span class="ft-comment">← Producción</span><br>
+    <span class="ft-indent"></span><span class="ft-file">docker-compose.local.yml</span> <span class="ft-comment">← Desarrollo local</span><br>
+    <span class="ft-indent"></span><span class="ft-file">Dockerfile</span> <span class="ft-comment">← Cómo construir la imagen de Django</span><br>
+    <span class="ft-indent"></span><span class="ft-file">manage.py</span> <span class="ft-comment">← CLI de Django (migraciones, createsuperuser, etc)</span><br>
+    <span class="ft-indent"></span><span class="ft-file">.env</span> <span class="ft-comment">← Variables secretas (NO subir a git)</span><br>
+  </div>
+
+  <h3>config/urls.py — el directorio central de rutas</h3>
+  <p>Cuando llega una petición a <code>/api/customers/</code>, Django busca aquí qué vista debe ejecutar:</p>
+  <pre><span class="c"># config/urls.py (simplificado)</span>
+<span class="n">urlpatterns</span> <span class="p">=</span> [
+    <span class="n">path</span>(<span class="s">'api/health/'</span>, <span class="n">HealthCheckView</span>),
+    <span class="n">path</span>(<span class="s">'admin/'</span>, <span class="n">admin.site.urls</span>),
+    <span class="n">path</span>(<span class="s">'api/auth/login/'</span>, <span class="n">CustomAuthToken</span>),
+    <span class="n">path</span>(<span class="s">'api/'</span>, <span class="n">include</span>(<span class="s">'apps.customers.urls'</span>)),    <span class="c"># delega a customers</span>
+    <span class="n">path</span>(<span class="s">'api/'</span>, <span class="n">include</span>(<span class="s">'apps.appointments.urls'</span>)), <span class="c"># delega a appointments</span>
+    <span class="n">path</span>(<span class="s">'api/workshop/'</span>, <span class="n">include</span>(<span class="s">'apps.workshop.urls'</span>)),
+    <span class="c"># ... etc</span>
+]</pre>
+</section>
+
+<!-- APPS -->
+<section id="apps">
+  <div class="section-title"><span class="icon">🧩</span> Anatomía de una App — El Patrón que se Repite</div>
+  <p>Cada app dentro de <code>apps/</code> sigue <strong>exactamente el mismo patrón</strong>. Una vez que entiendes <code>customers/</code>, entiendes todas las demás.</p>
+
+  <div class="arch-diagram">
+    <div style="display:flex;align-items:center;justify-content:center;gap:.5rem;flex-wrap:wrap">
+      <div class="arch-box red">models.py<span class="arch-label" style="margin:0">Tablas BD</span></div>
+      <span class="arch-arrow">→</span>
+      <div class="arch-box orange">serializers.py<span class="arch-label" style="margin:0">Python ↔ JSON</span></div>
+      <span class="arch-arrow">→</span>
+      <div class="arch-box blue">views.py<span class="arch-label" style="margin:0">HTTP handlers</span></div>
+      <span class="arch-arrow">→</span>
+      <div class="arch-box cyan">urls.py<span class="arch-label" style="margin:0">Rutas /api/</span></div>
+    </div>
+    <div style="display:flex;align-items:center;justify-content:center;gap:1.5rem;flex-wrap:wrap;margin-top:1rem">
+      <div class="arch-box green">services/<span class="arch-label" style="margin:0">Lógica negocio</span></div>
+      <span class="arch-arrow">↔</span>
+      <div class="arch-box purple">repositories/<span class="arch-label" style="margin:0">Queries BD</span></div>
+      <span style="color:var(--border)">|</span>
+      <div class="arch-box yellow">signals.py<span class="arch-label" style="margin:0">Eventos auto</span></div>
+      <span style="color:var(--border)">|</span>
+      <div class="arch-box pink">migrations/<span class="arch-label" style="margin:0">Historial BD</span></div>
+    </div>
+  </div>
+
+  <div class="card-grid">
+    <div class="card accent-red">
+      <h4>📋 models.py — Las Tablas</h4>
+      <p>Define la estructura de la base de datos. Cada clase Python es una tabla en PostgreSQL. Cada atributo es una columna.</p>
+      <pre style="font-size:.78rem"><span class="k">class</span> <span class="n">Customer</span>(<span class="n">models.Model</span>):
+    name = <span class="n">models.CharField</span>(max_length=<span class="v">200</span>)
+    email = <span class="n">models.EmailField</span>()
+    tenant = <span class="n">models.ForeignKey</span>(<span class="s">'Tenant'</span>...)</pre>
+    </div>
+    <div class="card accent-orange">
+      <h4>🔄 serializers.py — El Traductor</h4>
+      <p>Convierte objetos Python en JSON (para el frontend) y JSON en Python (para guardar en BD). También valida los datos entrantes.</p>
+    </div>
+    <div class="card accent-blue">
+      <h4>👁️ views.py — Los Manejadores</h4>
+      <p>Recibe las peticiones HTTP, llama al servicio correspondiente, y regresa la respuesta. Es como el mesero: toma el pedido, lo manda a la cocina, trae el plato.</p>
+    </div>
+    <div class="card accent-cyan">
+      <h4>🗺️ urls.py — Las Rutas</h4>
+      <p>Conecta URLs con vistas. Define el "menú" de endpoints disponibles en esta app.</p>
+      <pre style="font-size:.78rem">path(<span class="s">'customers/'</span>, CustomerListView),
+path(<span class="s">'customers/&lt;id&gt;/'</span>, CustomerDetailView),</pre>
+    </div>
+    <div class="card accent-green">
+      <h4>🧠 services/ — La Lógica de Negocio</h4>
+      <p>El cerebro. No sabe nada de HTTP ni JSON — solo sabe de reglas: "Para crear una cita, verifica que el mecánico esté disponible, calcula la duración, envía notificación." Se puede reusar desde signals, otras vistas, etc.</p>
+    </div>
+    <div class="card accent-purple">
+      <h4>🗄️ repositories/ — Las Consultas</h4>
+      <p>Centraliza todos los <code>Customer.objects.filter()</code>. Separa la lógica de base de datos de la lógica de negocio.</p>
+    </div>
+    <div class="card accent-yellow">
+      <h4>⚡ signals.py — Eventos Automáticos</h4>
+      <p>Como triggers de base de datos pero en Python. "Cuando se cree una cita (<code>post_save</code>), automáticamente ejecuta este código." Así es como una cita nueva genera una notificación automáticamente.</p>
+    </div>
+    <div class="card accent-red">
+      <h4>📜 migrations/ — El Historial de la BD</h4>
+      <p>Cada cambio en models.py genera un archivo de migración. Son como "commits" de la base de datos — un historial de todos los cambios al esquema.</p>
+      <div class="cmd" style="margin-top:.5rem">python manage.py makemigrations</div>
+      <div class="cmd">python manage.py migrate</div>
+    </div>
+  </div>
+</section>
+
+<!-- SETTINGS -->
+<section id="settings">
+  <div class="section-title"><span class="icon">⚙️</span> El Sistema de Settings</div>
+  <p>En lugar de un solo archivo enorme, TallerPro divide la configuración en capas:</p>
+
+  <div class="arch-diagram">
+    <div class="arch-row">
+      <div style="text-align:center">
+        <div class="arch-box blue" style="width:320px">base.py<span class="port">Todo lo compartido: apps, BD, Redis, CORS, REST Framework, Channels</span></div>
+      </div>
+    </div>
+    <div class="arch-row"><span class="arch-arrow">↓ importa</span><span style="width:120px;display:inline-block"></span><span class="arch-arrow">↓ importa</span></div>
+    <div class="arch-row">
+      <div style="text-align:center">
+        <div class="arch-box orange">development.py<span class="port">DEBUG=True, más permisivo</span></div>
+        <span class="arch-label">Local</span>
+      </div>
+      <div style="width:40px"></div>
+      <div style="text-align:center">
+        <div class="arch-box green">production.py<span class="port">DEBUG=False, SSL, hosts estrictos</span></div>
+        <span class="arch-label">VPS</span>
+      </div>
+    </div>
+    <div class="arch-row" style="margin-top:.75rem">
+      <span style="color:var(--muted);font-size:.85rem">Seleccionado por: <code style="font-size:.85rem">DJANGO_SETTINGS_MODULE</code></span>
+    </div>
+  </div>
+
+  <h3>Qué hay en base.py</h3>
+  <table>
+    <thead><tr><th>Sección</th><th>Qué configura</th></tr></thead>
+    <tbody>
+      <tr><td><code>INSTALLED_APPS</code></td><td>Le dice a Django qué apps existen. <code>daphne</code> debe ser primera para WebSockets.</td></tr>
+      <tr><td><code>MIDDLEWARE</code></td><td>Las capas que procesa cada petición (ver sección siguiente)</td></tr>
+      <tr><td><code>DATABASES</code></td><td>Conexión a PostgreSQL (lee de variables de entorno)</td></tr>
+      <tr><td><code>CHANNEL_LAYERS</code></td><td>Conexión a Redis para el bus de mensajes de WebSockets</td></tr>
+      <tr><td><code>REST_FRAMEWORK</code></td><td>Autenticación por Token, paginación de 20 items, filtros</td></tr>
+      <tr><td><code>CORS_ALLOWED_ORIGINS</code></td><td>Qué dominios frontend pueden hacer peticiones</td></tr>
+      <tr><td><code>AUTHENTICATION_BACKENDS</code></td><td>Usa <code>EmailBackend</code> para login con email (no username)</td></tr>
+      <tr><td><code>ASGI_APPLICATION</code></td><td>Apunta a <code>config.asgi.application</code> — entry point de WebSockets</td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout warn">
+    <span class="callout-icon">⚠️</span>
+    <p><strong>Regla de oro:</strong> Nunca pongas <code>DEBUG = True</code> en producción. Con DEBUG activo, Django muestra el código fuente completo cuando hay un error. Cualquier usuario vería tus contraseñas y configuración si encuentra un endpoint que falle.</p>
+  </div>
+</section>
+
+<!-- MIDDLEWARE -->
+<section id="middleware">
+  <div class="section-title"><span class="icon">🧱</span> Middleware — Las Capas de Seguridad</div>
+  <p>El middleware es una <strong>cadena de filtros</strong> que procesa cada petición antes de que llegue a tu vista. Como los controles de seguridad en un aeropuerto: hay diferentes puestos que revisan distintas cosas en orden.</p>
+
+  <div class="flow">
+    <div class="flow-step">
+      <div class="flow-step-left"><div class="step-num" style="background:rgba(239,68,68,.2);color:var(--red)">1</div><div class="step-line"></div></div>
+      <div class="flow-content"><strong>SecurityMiddleware</strong><p>Agrega headers de seguridad HTTP. En producción fuerza HTTPS.</p></div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-step-left"><div class="step-num" style="background:rgba(239,68,68,.2);color:var(--red)">2</div><div class="step-line"></div></div>
+      <div class="flow-content"><strong>SessionMiddleware</strong><p>Maneja sesiones de usuario (para el admin de Django, que usa sesiones, no tokens).</p></div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-step-left"><div class="step-num" style="background:rgba(79,142,247,.2);color:var(--blue)">3</div><div class="step-line"></div></div>
+      <div class="flow-content">
+        <strong>CorsMiddleware</strong> <span class="chip blue">Crítico</span>
+        <p>Revisa si el origen de la petición está en <code>CORS_ALLOWED_ORIGINS</code>. Si viene de <code>app.autotronia.com</code> ✅ la deja pasar. Si viene de otro dominio no autorizado, regresa 403. <strong>Debe estar antes de CommonMiddleware.</strong></p>
+      </div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-step-left"><div class="step-num" style="background:rgba(239,68,68,.2);color:var(--red)">4</div><div class="step-line"></div></div>
+      <div class="flow-content"><strong>CommonMiddleware</strong><p>Normalización de URLs (agrega trailing slash, etc.).</p></div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-step-left"><div class="step-num" style="background:rgba(34,197,94,.2);color:var(--green)">5</div><div class="step-line"></div></div>
+      <div class="flow-content">
+        <strong>AuthenticationMiddleware</strong> <span class="chip green">Crítico</span>
+        <p>Lee el header <code>Authorization: Token xxxxx</code>, busca el token en BD, y adjunta el usuario a <code>request.user</code>. Después de esto, el código sabe quién está haciendo la petición.</p>
+      </div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-step-left"><div class="step-num" style="background:rgba(168,85,247,.2);color:var(--purple)">6</div><div class="step-line"></div></div>
+      <div class="flow-content">
+        <strong>TenantMiddleware</strong> <span class="chip purple">Custom</span>
+        <p>Lee el header <code>X-Tenant-Id</code> y adjunta el tenant a <code>request.tenant</code>. Así las vistas saben a qué taller pertenece esta petición.</p>
+      </div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-step-left"><div class="step-num" style="background:rgba(168,85,247,.2);color:var(--purple)">7</div><div class="step-line"></div></div>
+      <div class="flow-content">
+        <strong>TenantFromUserMiddleware</strong> <span class="chip purple">Custom</span>
+        <p>Si el header no vino pero el usuario está autenticado, infiere el tenant desde el usuario. Fallback del anterior.</p>
+      </div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-step-left"><div class="step-num" style="background:rgba(79,142,247,.2);color:var(--blue)">✓</div><div class="step-line"></div></div>
+      <div class="flow-content">
+        <strong>→ Tu Vista recibe la petición</strong>
+        <p>Con <code>request.user</code> (quién eres) y <code>request.tenant</code> (a qué taller perteneces) ya resueltos.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WEBSOCKETS -->
+<section id="websockets">
+  <div class="section-title"><span class="icon">⚡</span> WebSockets — La Línea Directa en Tiempo Real</div>
+
+  <h3>¿Qué es un WebSocket?</h3>
+  <p>HTTP tradicional es como mandar un email: tú preguntas, el servidor responde, se acabó. Para saber si llegó algo nuevo, tienes que preguntar de nuevo (y de nuevo...). WebSocket es como una llamada telefónica: una vez establecida la conexión, <strong>ambos lados pueden hablar cuando quieran</strong>.</p>
+
+  <div class="callout success">
+    <span class="callout-icon">✅</span>
+    <p><strong>En TallerPro:</strong> Cuando un mecánico termina una orden de trabajo, la notificación llega al admin en el navegador <strong>al instante</strong>, sin que el admin tenga que recargar la página.</p>
+  </div>
+
+  <h3>Los archivos involucrados</h3>
+  <table>
+    <thead><tr><th>Archivo</th><th>Rol</th></tr></thead>
+    <tbody>
+      <tr><td><code>config/asgi.py</code></td><td>El portero ASGI. Valida el origen, aplica autenticación, enruta al Consumer correcto.</td></tr>
+      <tr><td><code>apps/core/routing.py</code></td><td>Define qué URL de WebSocket corresponde a qué Consumer. Como <code>urls.py</code> pero para WS.</td></tr>
+      <tr><td><code>apps/notifications/consumers.py</code></td><td>El handler del WebSocket. Maneja conexión, desconexión y mensajes.</td></tr>
+      <tr><td><code>apps/notifications/services.py</code></td><td>La función que otros módulos llaman para enviar una notificación via Redis.</td></tr>
+      <tr><td><code>config/settings/base.py</code></td><td><code>CHANNEL_LAYERS</code>: configura Redis como bus de mensajes entre Gunicorn y Daphne.</td></tr>
+    </tbody>
+  </table>
+
+  <h3>El asgi.py explicado</h3>
+  <pre><span class="c"># config/asgi.py</span>
+<span class="k">application</span> = <span class="n">ProtocolTypeRouter</span>({
+    <span class="c"># Peticiones HTTP → Django normal (mismo que Gunicorn)</span>
+    <span class="s">"http"</span>: <span class="n">django_asgi_app</span>,
+
+    <span class="c"># Peticiones WebSocket → esta cadena de validaciones</span>
+    <span class="s">"websocket"</span>: <span class="n">CorsOriginValidator</span>(   <span class="c"># 1. ¿El origen está en CORS_ALLOWED_ORIGINS?</span>
+        <span class="n">AuthMiddlewareStack</span>(             <span class="c"># 2. Aplica autenticación Django</span>
+            <span class="n">URLRouter</span>(<span class="n">websocket_urlpatterns</span>) <span class="c"># 3. Enruta a NotificationConsumer</span>
+        )
+    ),
+})</pre>
+
+  <div class="callout info">
+    <span class="callout-icon">💡</span>
+    <p><strong>¿Por qué CorsOriginValidator y no AllowedHostsOriginValidator?</strong> El validador original revisaba el <code>Origin</code> del WebSocket contra <code>ALLOWED_HOSTS</code> (que solo tiene <code>api.autotronia.com</code>). Pero el frontend manda <code>Origin: https://app.autotronia.com</code>, que es un dominio diferente, así que lo rechazaba. El custom validator revisa contra <code>CORS_ALLOWED_ORIGINS</code> que sí incluye el dominio del frontend.</p>
+  </div>
+
+  <h3>Autenticación en WebSockets</h3>
+  <p>Los WebSockets no pueden mandar headers HTTP custom. Por eso el token va en el query string de la URL:</p>
+  <pre><span class="c"># URL del WebSocket desde el frontend</span>
+<span class="v">wss://api.autotronia.com/ws/notifications/?token=abc123xyz</span>
+
+<span class="c"># El Consumer lo lee así en connect():</span>
+<span class="n">query_string</span> = <span class="n">self.scope</span>[<span class="s">'query_string'</span>].decode()  <span class="c"># "token=abc123xyz"</span>
+<span class="n">token_key</span> = ...  <span class="c"># extrae "abc123xyz"</span>
+<span class="n">token</span> = <span class="n">Token.objects.get</span>(key=<span class="n">token_key</span>)           <span class="c"># busca en BD</span>
+<span class="n">self.user</span> = <span class="n">token.user</span>                              <span class="c"># ¡ya tiene el usuario!</span></pre>
+
+  <h3>Channel Groups — grupos de usuarios</h3>
+  <div class="two-col">
+    <div class="card accent-blue">
+      <h4>Grupo personal: <code>user_42</code></h4>
+      <p>Solo este usuario está en este grupo. Las notificaciones personales se envían aquí.</p>
+    </div>
+    <div class="card accent-purple">
+      <h4>Grupo del tenant: <code>tenant_1</code></h4>
+      <p>Todos los usuarios del mismo taller. Los broadcasts generales llegan a todos simultáneamente.</p>
+    </div>
+  </div>
+</section>
+
+<!-- REDIS -->
+<section id="redis">
+  <div class="section-title"><span class="icon">🔴</span> Redis — El Mensajero Interno</div>
+  <p>Redis es una base de datos en memoria (RAM) extremadamente rápida. En TallerPro su rol principal es ser el <strong>bus de mensajes</strong> entre Gunicorn y Daphne.</p>
+
+  <div class="callout info">
+    <span class="callout-icon">💡</span>
+    <p><strong>El problema que resuelve:</strong> Gunicorn y Daphne son procesos completamente separados. Si Gunicorn quiere avisar a Daphne "hay una notificación para el usuario 5", ¿cómo lo hace? No pueden hablar directamente — están en procesos diferentes. La respuesta es Redis: Gunicorn escribe en Redis, Daphne lo lee, Daphne lo manda al WebSocket.</p>
+  </div>
+
+  <pre><span class="c"># Cómo se envía una notificación (apps/notifications/services.py)</span>
+<span class="n">channel_layer</span> = <span class="n">get_channel_layer</span>()
+
+<span class="k">await</span> <span class="n">channel_layer.group_send</span>(
+    <span class="v">f"user_{user_id}"</span>,           <span class="c"># ¿A qué grupo de Redis?</span>
+    {
+        <span class="s">'type'</span>: <span class="s">'notification_message'</span>,  <span class="c"># Método del Consumer a ejecutar</span>
+        <span class="s">'notification'</span>: {...}              <span class="c"># Los datos</span>
+    }
+)
+<span class="c"># Redis lo entrega a Daphne → Daphne lo manda por el WebSocket abierto</span></pre>
+</section>
+
+<!-- MULTI-TENANT -->
+<section id="multitenant">
+  <div class="section-title"><span class="icon">🏪</span> Multi-Tenant — Un Backend, Múltiples Talleres</div>
+  <p>TallerPro puede servir a <strong>múltiples talleres simultáneamente</strong> con un solo backend. Cada taller es un "tenant". La información de un taller nunca se mezcla con la de otro.</p>
+
+  <pre><span class="c"># Sin multi-tenant (peligroso — ve datos de todos):</span>
+<span class="n">Customer.objects.all</span>()
+
+<span class="c"># Con multi-tenant (correcto — solo ve los del taller actual):</span>
+<span class="n">Customer.objects.filter</span>(tenant=<span class="n">request.tenant</span>)</pre>
+
+  <div class="flow">
+    <div class="flow-step">
+      <div class="flow-step-left"><div class="step-num" style="background:rgba(168,85,247,.2);color:var(--purple)">1</div><div class="step-line"></div></div>
+      <div class="flow-content"><strong>Frontend manda el header</strong><p><code>X-Tenant-Id: 1</code> en cada petición. El frontend sabe el ID porque lo recibe al hacer login.</p></div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-step-left"><div class="step-num" style="background:rgba(168,85,247,.2);color:var(--purple)">2</div><div class="step-line"></div></div>
+      <div class="flow-content"><strong>TenantMiddleware lo lee</strong><p>Lee el header, busca el tenant en BD, adjunta a <code>request.tenant</code>.</p></div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-step-left"><div class="step-num" style="background:rgba(168,85,247,.2);color:var(--purple)">3</div><div class="step-line"></div></div>
+      <div class="flow-content"><strong>Las vistas filtran por tenant</strong><p>Un mecánico del Taller A nunca puede ver los datos del Taller B.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- FLUJO HTTP -->
+<section id="flujo-http">
+  <div class="section-title"><span class="icon">🌊</span> Flujo Completo de una Petición HTTP</div>
+  <p>Ejemplo real: el frontend pide la lista de clientes.</p>
+
+  <div class="flow">
+    <div class="flow-step">
+      <div class="flow-step-left"><div class="step-num" style="background:rgba(79,142,247,.2);color:var(--blue)">1</div><div class="step-line"></div></div>
+      <div class="flow-content"><strong>Frontend (React en app.autotronia.com)</strong><p><code>fetch('https://api.autotronia.com/api/customers/', { headers: { Authorization: 'Token abc123', 'X-Tenant-Id': '1' } })</code></p></div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-step-left"><div class="step-num" style="background:rgba(6,182,212,.2);color:var(--cyan)">2</div><div class="step-line"></div></div>
+      <div class="flow-content"><strong>Nginx (sistema del VPS, puerto 443)</strong><p>Recibe la petición HTTPS. Ve que el path es <code>/api/customers/</code> → proxy a <code>http://localhost:8001/api/customers/</code>.</p></div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-step-left"><div class="step-num" style="background:rgba(34,197,94,.2);color:var(--green)">3</div><div class="step-line"></div></div>
+      <div class="flow-content"><strong>Middleware Stack (Django en contenedor 8001)</strong><p>CORS ✅ → Auth (valida token, encuentra usuario Juan) → TenantMiddleware (lee X-Tenant-Id: 1, adjunta Taller Marines)</p></div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-step-left"><div class="step-num" style="background:rgba(249,115,22,.2);color:var(--orange)">4</div><div class="step-line"></div></div>
+      <div class="flow-content"><strong>Router → View</strong><p><code>config/urls.py</code> → <code>apps/customers/urls.py</code> → <code>CustomerListView</code></p></div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-step-left"><div class="step-num" style="background:rgba(34,197,94,.2);color:var(--green)">5</div><div class="step-line"></div></div>
+      <div class="flow-content"><strong>Service → Repository → PostgreSQL</strong><p><code>Customer.objects.filter(tenant=1)</code> → SQL → PostgreSQL regresa los datos.</p></div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-step-left"><div class="step-num" style="background:rgba(79,142,247,.2);color:var(--blue)">6</div><div class="step-line"></div></div>
+      <div class="flow-content"><strong>Respuesta regresa</strong><p>Serializer convierte a JSON → Django → Gunicorn → Nginx → HTTPS → React muestra los clientes.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- FLUJO WS -->
+<section id="flujo-ws">
+  <div class="section-title"><span class="icon">🔔</span> Flujo Completo de una Notificación WebSocket</div>
+  <p>Ejemplo: mecánico marca una orden como "Lista". El admin lo ve en tiempo real.</p>
+
+  <div class="flow">
+    <div class="flow-step">
+      <div class="flow-step-left"><div class="step-num" style="background:rgba(79,142,247,.2);color:var(--blue)">1</div><div class="step-line"></div></div>
+      <div class="flow-content"><strong>Admin abre la app</strong><p>Frontend construye <code>wss://api.autotronia.com/ws/notifications/?token=abc123</code> y abre conexión WebSocket.</p></div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-step-left"><div class="step-num" style="background:rgba(6,182,212,.2);color:var(--cyan)">2</div><div class="step-line"></div></div>
+      <div class="flow-content"><strong>Nginx recibe el upgrade</strong><p>Ve <code>/ws/</code> → agrega headers Upgrade → proxy a <code>http://localhost:8002</code> (Daphne).</p></div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-step-left"><div class="step-num" style="background:rgba(168,85,247,.2);color:var(--purple)">3</div><div class="step-line"></div></div>
+      <div class="flow-content"><strong>asgi.py procesa la conexión</strong><p><code>CorsOriginValidator</code> ✅ → <code>AuthMiddlewareStack</code> → <code>URLRouter</code> → instancia <code>NotificationConsumer</code>.</p></div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-step-left"><div class="step-num" style="background:rgba(168,85,247,.2);color:var(--purple)">4</div><div class="step-line"></div></div>
+      <div class="flow-content"><strong>Consumer.connect()</strong><p>Valida token → encuentra Admin (id=5) → se une a grupos <code>user_5</code> y <code>tenant_1</code> en Redis → acepta → manda conteo de notificaciones.</p></div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-step-left"><div class="step-num" style="background:rgba(234,179,8,.2);color:var(--yellow)">5</div><div class="step-line"></div></div>
+      <div class="flow-content"><strong>La conexión queda ABIERTA</strong><p>El admin navega por la app normalmente. El WebSocket sigue activo en segundo plano.</p></div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-step-left"><div class="step-num" style="background:rgba(249,115,22,.2);color:var(--orange)">6</div><div class="step-line"></div></div>
+      <div class="flow-content"><strong>Mecánico marca orden como "Lista" (petición HTTP separada)</strong><p><code>PATCH /api/workshop/orders/12/</code> → va por Gunicorn (puerto 8001). Django actualiza la BD.</p></div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-step-left"><div class="step-num" style="background:rgba(249,115,22,.2);color:var(--orange)">7</div><div class="step-line"></div></div>
+      <div class="flow-content"><strong>Signal se dispara automáticamente</strong><p><code>post_save</code> en <code>workshop/signals.py</code> detecta el cambio → llama a <code>notification_service.send(user_id=5, ...)</code></p></div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-step-left"><div class="step-num" style="background:rgba(239,68,68,.2);color:var(--red)">8</div><div class="step-line"></div></div>
+      <div class="flow-content"><strong>El servicio escribe en Redis</strong><p><code>channel_layer.group_send("user_5", {"type": "notification_message", ...})</code></p></div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-step-left"><div class="step-num" style="background:rgba(168,85,247,.2);color:var(--purple)">9</div><div class="step-line"></div></div>
+      <div class="flow-content"><strong>Daphne recibe de Redis</strong><p>Estaba suscrito al grupo <code>user_5</code>. Recibe el mensaje → ejecuta <code>notification_message(event)</code> → lo manda por el WebSocket abierto al puerto 8002.</p></div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-step-left"><div class="step-num" style="background:rgba(79,142,247,.2);color:var(--blue)">10</div><div class="step-line"></div></div>
+      <div class="flow-content"><strong>Navegador del admin recibe el mensaje</strong><p>Badge se actualiza → suena el sonido → aparece el toast. <strong>Todo en menos de 100ms.</strong></p></div>
+    </div>
+  </div>
+
+  <div class="callout success">
+    <span class="callout-icon">✅</span>
+    <p><strong>Lo clave:</strong> Gunicorn (atendió al mecánico en puerto 8001) y Daphne (habla con el admin en puerto 8002) son procesos separados que se comunicaron <strong>a través de Redis</strong>. Sin Redis esto sería imposible.</p>
+  </div>
+</section>
+
+<!-- ENV VARS -->
+<section id="envvars">
+  <div class="section-title"><span class="icon">🔧</span> Variables de Entorno — El Panel de Control</div>
+  <p>Variables que se pasan al programa desde afuera, sin estar escritas en el código. Útiles para <strong>secretos</strong> y para <strong>configuración que cambia entre entornos</strong>.</p>
+
+  <div class="callout danger">
+    <span class="callout-icon">🚫</span>
+    <p><strong>Nunca pongas contraseñas o API keys en el código.</strong> El archivo <code>.env</code> está en <code>.gitignore</code> por una razón — si subes secretos a GitHub, cualquiera puede verlos y comprometer tu servidor.</p>
+  </div>
+
+  <h3>Variables del backend (archivo .env en el VPS)</h3>
+  <table>
+    <thead><tr><th>Variable</th><th>Ejemplo producción</th><th>Para qué sirve</th></tr></thead>
+    <tbody>
+      <tr><td><code>DJANGO_SETTINGS_MODULE</code></td><td><code>config.settings.production</code></td><td>Qué archivo de settings cargar</td></tr>
+      <tr><td><code>SECRET_KEY</code></td><td><code>abc123xyz...</code> (larga y aleatoria)</td><td>Firma cookies y tokens. Nunca la compartas.</td></tr>
+      <tr><td><code>DEBUG</code></td><td><code>False</code></td><td>Siempre False en producción</td></tr>
+      <tr><td><code>ALLOWED_HOSTS</code></td><td><code>api.autotronia.com</code></td><td>Dominios que Django acepta (solo el backend)</td></tr>
+      <tr><td><code>DB_HOST</code></td><td><code>db</code></td><td>Nombre del contenedor de Postgres en la red Docker</td></tr>
+      <tr><td><code>REDIS_HOST</code></td><td><code>redis</code></td><td>Nombre del contenedor de Redis en la red Docker</td></tr>
+      <tr><td><code>CORS_ALLOWED_ORIGINS</code></td><td><code>https://app.autotronia.com,https://...</code></td><td>Dominios del frontend autorizados. <strong>Debe incluir el frontend</strong></td></tr>
+      <tr><td><code>WAHA_API_URL</code></td><td><code>http://waha:3000</code></td><td>URL interna de WAHA (por red Docker)</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Variables del frontend</h3>
+  <table>
+    <thead><tr><th>Variable</th><th>Producción (Vercel)</th><th>Local (.env)</th></tr></thead>
+    <tbody>
+      <tr><td><code>VITE_API_URL</code></td><td><code>https://api.autotronia.com/api</code></td><td><code>http://localhost/api</code></td></tr>
+      <tr><td><code>VITE_WS_URL</code></td><td>No necesaria (se auto-detecta)</td><td><code>ws://localhost/ws/notifications/</code></td></tr>
+      <tr><td><code>VITE_TENANT_SLUG</code></td><td>configurado</td><td><code>taller-marines</code></td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- COMANDOS -->
+<section id="comandos">
+  <div class="section-title"><span class="icon">💻</span> Comandos Útiles</div>
+
+  <h3>Docker — Lo más importante</h3>
+  <table>
+    <thead><tr><th>Comando</th><th>Para qué sirve</th></tr></thead>
+    <tbody>
+      <tr><td><div class="cmd">docker compose up --build -d</div></td><td>⭐ Reconstruir imágenes y levantar todo (usar siempre después de cambiar código en prod)</td></tr>
+      <tr><td><div class="cmd">docker compose restart daphne</div></td><td>Reiniciar solo Daphne (si solo cambias asgi.py o consumers.py y en dev donde el código está montado)</td></tr>
+      <tr><td><div class="cmd">docker compose ps</div></td><td>Ver estado de todos los contenedores</td></tr>
+      <tr><td><div class="cmd">docker logs taller_backend --tail 50 -f</div></td><td>Ver logs de Django en tiempo real</td></tr>
+      <tr><td><div class="cmd">docker logs taller_daphne --tail 50 -f</div></td><td>Ver logs de Daphne (WebSockets)</td></tr>
+      <tr><td><div class="cmd">docker logs taller_nginx --tail 50 -f</div></td><td>Ver logs de Nginx (si fuera contenedor)</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Django — Dentro del contenedor</h3>
+  <table>
+    <thead><tr><th>Comando</th><th>Para qué sirve</th></tr></thead>
+    <tbody>
+      <tr><td><div class="cmd">docker exec -it taller_backend python manage.py createsuperuser</div></td><td>Crear usuario administrador</td></tr>
+      <tr><td><div class="cmd">docker exec -it taller_backend python manage.py migrate</div></td><td>Aplicar migraciones pendientes</td></tr>
+      <tr><td><div class="cmd">docker exec -it taller_backend python manage.py makemigrations</div></td><td>Generar migración por cambios en models.py</td></tr>
+      <tr><td><div class="cmd">docker exec -it taller_backend python manage.py shell</div></td><td>Consola Python interactiva con Django cargado</td></tr>
+      <tr><td><div class="cmd">docker exec -it taller_backend bash</div></td><td>Entrar al contenedor con bash</td></tr>
+    </tbody>
+  </table>
+
+  <h3>¿Cuándo reiniciar qué?</h3>
+  <div class="card-grid">
+    <div class="card accent-orange">
+      <h4>Cambios en código Python (views, models, services)</h4>
+      <p>En producción: <code>docker compose up --build -d</code>. En local: se recarga automático.</p>
+    </div>
+    <div class="card accent-purple">
+      <h4>Cambios en asgi.py o consumers.py</h4>
+      <p>En producción: <code>docker compose up --build -d</code>. En local: <code>docker compose restart daphne</code></p>
+    </div>
+    <div class="card accent-cyan">
+      <h4>Cambios en Nginx del VPS</h4>
+      <p><code>sudo nginx -t</code> (verificar) → <code>sudo nginx -s reload</code></p>
+    </div>
+    <div class="card accent-blue">
+      <h4>Cambios en variables .env</h4>
+      <p><code>docker compose down && docker compose up -d</code> — los contenedores leen .env al iniciarse.</p>
+    </div>
+  </div>
+
+  <h3>Diagnóstico de problemas comunes</h3>
+  <table>
+    <thead><tr><th>Síntoma</th><th>Causa probable</th><th>Dónde buscar</th></tr></thead>
+    <tbody>
+      <tr><td>API no responde</td><td>Contenedor backend caído</td><td><code>docker compose ps</code> + <code>docker logs taller_backend</code></td></tr>
+      <tr><td>Punto rojo en notificaciones</td><td>WebSocket no conecta</td><td><code>docker logs taller_daphne</code> + consola del navegador</td></tr>
+      <tr><td>Error 502 Bad Gateway</td><td>Nginx no llega a Django/Daphne</td><td>Verificar puertos 8001/8002 con <code>docker ps</code></td></tr>
+      <tr><td>CORS error en navegador</td><td>Dominio no en CORS_ALLOWED_ORIGINS</td><td>Revisar <code>.env</code> en el VPS, variable <code>CORS_ALLOWED_ORIGINS</code></td></tr>
+      <tr><td>Cambio de código no tiene efecto</td><td>No se reconstruyó la imagen</td><td>Ejecutar <code>docker compose up --build -d</code></td></tr>
+      <tr><td>Error de migraciones al iniciar</td><td>BD desactualizada</td><td><code>docker exec -it taller_backend python manage.py migrate</code></td></tr>
+    </tbody>
+  </table>
+</section>
+
+<hr class="section-hr">
+
+<div class="card accent-green" style="text-align:center;padding:2rem;margin-bottom:3rem">
+  <h3 style="color:var(--green);margin-top:0;font-size:1.4rem">🎉 Ya dominas la arquitectura de TallerPro</h3>
+  <p style="color:var(--muted);max-width:600px;margin:.5rem auto 0">Ahora sabes exactamente qué hace cada pieza, cómo se conectan, y a dónde ir cuando algo falla. Esta documentación está basada en el código real del proyecto.</p>
+</div>
+
+</div>
+</body>
+</html>
